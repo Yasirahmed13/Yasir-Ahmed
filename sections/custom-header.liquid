@@ -1,0 +1,60 @@
+<header class="header-section">
+  <div class="header-container">
+    <div class="navbar-icon">
+      <span>&#9776;</span>
+    </div>
+
+    <div class="logo">
+      <img src="{{ section.settings.header_logo | img_url: '200x' }}" alt="Logo">
+    </div>
+
+    <div class="header-center">
+      <p>{{ section.settings.header_center_text }}</p>
+    </div>
+
+    <div class="header-right">
+      <a href="{{ section.settings.header_button_link }}" class="header-button">{{ section.settings.header_button_text }}</a>
+    </div>
+  </div>
+
+  <div class="header-subtext">
+    <p>{{ section.settings.header_subtext }}</p>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Custom Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "header_logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "text",
+      "id": "header_center_text",
+      "label": "Center Text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "header_button_text",
+      "label": "Button Text",
+      "default": "CHOOSE GIFT"
+    },
+    {
+      "type": "url",
+      "id": "header_button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "header_subtext",
+      "label": "Subtext (Optional)",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    }
+  ]
+}
+{% endschema %}

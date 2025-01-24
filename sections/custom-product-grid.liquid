@@ -1,0 +1,229 @@
+{% schema %}
+{
+  "name": "Custom Product Grid",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product 1"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product 2"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product 3"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product 4"
+    },
+    {
+      "type": "product",
+      "id": "product_5",
+      "label": "Product 5"
+    },
+    {
+      "type": "product",
+      "id": "product_6",
+      "label": "Product 6"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="custom-product-grid">
+  <div class="grid-heading">
+    <h2>Tisso vision in the wild</h2>
+  </div>
+  <div class="grid-container">
+  {% for i in (1..6) %}
+    {% assign product_key = "product_" | append: i %}
+    {% assign product = section.settings[product_key] %}
+    {% if product %}
+      <div class="grid-item">
+        {% assign product_data = all_products[product] %}
+        <a href="#" 
+           class="open-popup" 
+           data-product-image="{{ product_data.featured_image | img_url: 'medium' }}"
+           data-product-title="{{ product_data.title }}"
+           data-product-price="{{ product_data.price | money }}"
+           data-product-description="{{ product_data.description }}"
+           data-product-handle="{{ product_data.handle }}">
+          <img src="{{ product_data.featured_image | img_url: 'medium' }}" alt="{{ product_data.title }}">
+        </a>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<!--Popup-->
+<div class="popup-modal" id="product-popup">
+  <div class="popup-content">
+    <span class="close-btn">&times;</span>
+    <div class="popup-top">
+      <!-- Product Image on the Left -->
+      <div class="popup-image-container">
+        <img src="" alt="Product Image" id="popup-image">
+      </div>
+      <div class="popup-details">
+        <h3 id="popup-title">Tailored Jacket</h3>
+        <p id="popup-price">980,00€</p>
+        <p id="popup-description">This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.</p>
+      </div>
+    </div>
+    <div class="popup-bottom">
+      <!-- Color Options -->
+      <div class="popup-color">
+        <label>Color</label>
+        <div class="color-options">
+          <button class="color-option" data-color="blue">Blue</button>
+          <button class="color-option" data-color="black">Black</button>
+        </div>
+      </div>
+      <div class="popup-size">
+        <label>Size</label>
+        <select id="popup-size">
+          <option value="">Choose your size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+        </select>
+      </div>
+      <div class="add-to-cart-container">
+        <button class="add-to-cart-btn">ADD TO CART</button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const popup = document.getElementById('product-popup');
+  const closeBtn = document.querySelector('.close-btn');
+  const openPopupLinks = document.querySelectorAll('.open-popup');
+  const addToCartBtn = document.querySelector('.add-to-cart-btn');
+  const sizeDropdown = document.getElementById('popup-size');
+  const colorOptions = document.querySelectorAll('.color-option');
+
+  // Variables to hold product data
+  let selectedProduct = {
+    id: null, // Product ID to be set dynamically
+    color: null,
+    size: null,
+  };
+
+  // Open popup and set product details
+  openPopupLinks.forEach(link => {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      // Get product data from data attributes
+      const productImage = this.getAttribute('data-product-image');
+      const productTitle = this.getAttribute('data-product-title');
+      const productPrice = this.getAttribute('data-product-price');
+      const productDescription = this.getAttribute('data-product-description');
+      const productId = this.getAttribute('data-product-id'); // Shopify variant ID
+
+      // Set popup content dynamically
+      document.getElementById('popup-image').src = productImage;
+      document.getElementById('popup-title').textContent = productTitle;
+      document.getElementById('popup-price').textContent = productPrice;
+      document.getElementById('popup-description').innerHTML = productDescription;
+
+      // Store product ID for adding to cart
+      selectedProduct.id = productId;
+
+      // Reset color and size selections
+      selectedProduct.color = null;
+      selectedProduct.size = null;
+      sizeDropdown.value = ''; // Reset size dropdown
+      colorOptions.forEach(option => option.classList.remove('active')); // Reset active color
+
+      // Show the popup
+      popup.style.display = 'block';
+    });
+  });
+
+  // Handle color selection
+  colorOptions.forEach(option => {
+    option.addEventListener('click', function () {
+      // Highlight selected color
+      colorOptions.forEach(opt => opt.classList.remove('active'));
+      this.classList.add('active');
+
+      // Update selected color in product data
+      selectedProduct.color = this.getAttribute('data-color');
+    });
+  });
+
+  // Close the popup
+  closeBtn.addEventListener('click', function () {
+    popup.style.display = 'none';
+  });
+
+  // Close the popup when clicking outside of it
+  window.addEventListener('click', function (event) {
+    if (event.target === popup) {
+      popup.style.display = 'none';
+    }
+  });
+
+  // Handle Add to Cart button click
+  addToCartBtn.addEventListener('click', function () {
+    const selectedSize = sizeDropdown.value;
+
+    // Validate size and color selection
+    if (!selectedSize) {
+      alert('Please select a size before adding to the cart.');
+      return;
+    }
+    if (!selectedProduct.color) {
+      alert('Please select a color before adding to the cart.');
+      return;
+    }
+
+    // Update the selected product size
+    selectedProduct.size = selectedSize;
+
+    // Make AJAX request to add the product to the cart
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: selectedProduct.id, // Shopify variant ID
+        quantity: 1,
+        properties: {
+          Color: selectedProduct.color, // Add color to cart properties
+          Size: selectedProduct.size,  // Add size to cart properties
+        },
+      }),
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to add product to the cart.');
+        }
+      })
+      .then(data => {
+        alert('Product added to the cart!');
+        popup.style.display = 'none'; // Close the popup after adding to the cart
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error adding the product to your cart. Please try again.');
+      });
+  });
+});
+</script>
+
+
+
