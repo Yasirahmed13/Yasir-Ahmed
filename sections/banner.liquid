@@ -1,0 +1,70 @@
+<section id="banner-section">
+  <div class="banner-container">
+    <div class="banner-landscape-image">
+      <img src="https://cdn.shopify.com/s/files/1/0928/4082/1012/files/Frame.png?v=1737381836" alt="Banner Landscape">
+    </div>
+    <div class="banner-columns">
+      <div class="banner-text-column">
+        <h1 class="desktop-text">{{ section.settings.banner_heading }}</h1>
+        <p class="desktop-text">{{ section.settings.banner_subheading }}</p>
+        <h1 class="mobile-text">The Gift Guide</h1>
+        <p class="mobile-text">Discover Joy: Your Ultimate Holiday Gift Destination.</p>
+        <a href="{{ section.settings.banner_button_link }}" class="shop-now-btn">{{ section.settings.banner_button_text }}</a>
+      </div>
+      <div class="banner-image-column">
+        <img src="https://cdn.shopify.com/s/files/1/0928/4082/1012/files/Frame_1.png?v=1737381886" alt="Banner Secondary">
+      </div>
+    </div>
+    <div class="banner-footer-text">
+      <p>{{ section.settings.banner_secondary_text }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Banner Section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_landscape_image",
+      "label": "Landscape Image"
+    },
+    {
+      "type": "text",
+      "id": "banner_heading",
+      "label": "Banner Heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "text",
+      "id": "banner_subheading",
+      "label": "Banner Subheading",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
+    },
+    {
+      "type": "text",
+      "id": "banner_button_text",
+      "label": "Button Text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "banner_button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_secondary_image",
+      "label": "Secondary Image"
+    },
+    {
+      "type": "text",
+      "id": "banner_secondary_text",
+      "label": "Secondary Text",
+      "default": "Sustainable, ethically made clothes in sizes XXS to 6XL."
+    }
+  ]
+}
+{% endschema %}
